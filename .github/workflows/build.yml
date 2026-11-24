@@ -26,23 +26,25 @@ jobs:
         run: docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_hooks.php
       - name: Test in-place upgrades and file ownership
         run: |
-          for version in 1.0.5 1.0.6; do
+          for version in 1.0.5 1.0.6 1.0.7; do
             for mode in valid modified uninstalled; do
               docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_upgrade.php "$mode" "$version"
             done
           done
       - name: Test Detail View hook without template replacement
         run: docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_detail_hook.php
+      - name: Test Studio name field option
+        run: docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_name_field.php
       - name: Build installer
         run: python3 tools/build.py
       - name: Check ZIP contents
         run: |
-          python3 -m zipfile -t dist/SQS_Copy_Text-1.0.7.zip
+          python3 -m zipfile -t dist/SQS_Copy_Text-1.0.8.zip
           python3 tests/check_archive.py
       - uses: actions/upload-artifact@v5
         with:
-          name: SQS_Copy_Text-1.0.7
-          path: dist/SQS_Copy_Text-1.0.7.zip
+          name: SQS_Copy_Text-1.0.8
+          path: dist/SQS_Copy_Text-1.0.8.zip
           if-no-files-found: error
 
   release:
@@ -59,12 +61,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v1.0.7 >/dev/null 2>&1; then
-            echo "Release v1.0.7 already exists; skipping publication."
+          if gh release view v1.0.8 >/dev/null 2>&1; then
+            echo "Release v1.0.8 already exists; skipping publication."
           else
-            gh release create v1.0.7 dist/SQS_Copy_Text-1.0.7.zip \
+            gh release create v1.0.8 dist/SQS_Copy_Text-1.0.8.zip \
               --target "$GITHUB_SHA" \
-              --title "SQS Copy Text 1.0.7" \
+              --title "SQS Copy Text 1.0.8" \
               --prerelease \
-              --notes "Shows localized copied feedback beside the clicked icon for three seconds without changing field layout. Upgrades in place from 1.0.3 through 1.0.6 and preserves Studio field selections. Verify on a test CRM. SuiteCRM 7.14.x with PHP 7.4 is outside the official compatibility matrix."
+              --notes "Adds Studio checkbox support for SuiteCRM's built-in name field type. Upgrades in place from 1.0.3 through 1.0.7 and preserves existing field selections. Verify on a test CRM. SuiteCRM 7.14.x with PHP 7.4 is outside the official compatibility matrix."
           fi

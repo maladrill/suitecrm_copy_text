@@ -11,4 +11,9 @@ class Administration
             'sqs_copy_text_Contacts:secret_c' => '1',
         );
     }
+
+    public function saveSetting($category, $key, $value)
+    {
+        $GLOBALS['saved_setting'] = array($category, $key, $value);
+    }
 }

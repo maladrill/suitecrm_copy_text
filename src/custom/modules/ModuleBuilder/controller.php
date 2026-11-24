@@ -9,7 +9,7 @@ require_once 'modules/Administration/Administration.php';
 class CustomModuleBuilderController extends ModuleBuilderController
 {
     private const ALLOWED_TYPES = array(
-        'varchar', 'text', 'phone', 'email', 'url', 'enum', 'multienum',
+        'name', 'varchar', 'text', 'phone', 'email', 'url', 'enum', 'multienum',
         'int', 'float', 'decimal', 'date', 'datetime', 'datetimecombo',
         'currency', 'relate',
     );

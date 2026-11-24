@@ -108,7 +108,7 @@ addForm('popup_form');
 </tr>
 </table>
 {$fieldLayout}
-{if (!isset($package->name) || $package->name == 'studio') && ($vardef.type == 'varchar' || $vardef.type == 'text' || $vardef.type == 'phone' || $vardef.type == 'email' || $vardef.type == 'url' || $vardef.type == 'enum' || $vardef.type == 'multienum' || $vardef.type == 'int' || $vardef.type == 'float' || $vardef.type == 'decimal' || $vardef.type == 'date' || $vardef.type == 'datetime' || $vardef.type == 'datetimecombo' || $vardef.type == 'currency' || $vardef.type == 'relate')}
+{if (!isset($package->name) || $package->name == 'studio') && ($vardef.type == 'name' || $vardef.type == 'varchar' || $vardef.type == 'text' || $vardef.type == 'phone' || $vardef.type == 'email' || $vardef.type == 'url' || $vardef.type == 'enum' || $vardef.type == 'multienum' || $vardef.type == 'int' || $vardef.type == 'float' || $vardef.type == 'decimal' || $vardef.type == 'date' || $vardef.type == 'datetime' || $vardef.type == 'datetimecombo' || $vardef.type == 'currency' || $vardef.type == 'relate')}
 <div class="sqs-copy-studio-option">
     <input type="hidden" name="sqs_copyable" value="0">
     <label for="sqs_copyable">

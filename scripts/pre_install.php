@@ -53,6 +53,13 @@ function pre_install()
         ),
     );
     $knownVersions['1.0.6'] = $knownVersions['1.0.5'];
+    $knownVersions['1.0.7'] = $common + array(
+        'Extension/application/Ext/Language/en_us.sqs_copy_text.php' => 'e591b8bb0a7bfafa78196365d6e5bfdb2c2a8e34e8c9783492ab1c185455b0a3',
+        'Extension/application/Ext/Language/pl_PL.sqs_copy_text.php' => 'fce186f54a69cc90258ea8c0b4436e004e7d91be64b7ed3e76fa13d270c871f3',
+        'include/SQS_CopyText/Hook.php' => '1dafc9abdad86ad1f5227e70ce7357e98a120a22089ad3336ae463f8d972fa79',
+        'include/SQS_CopyText/copy.css' => 'c4571b8d524d74f0d9bf68d4abfb00471282a593dde0334f9d8cdf0ef23953a9',
+        'include/SQS_CopyText/copy.js' => '4f2053af9c4140287be08e6d9f6b97247c018ad695f2473f53d68dff463487c6',
+    );
     $previousVersion = isset($_REQUEST['previous_version']) ? $_REQUEST['previous_version'] : '';
     $previousId = isset($_REQUEST['previous_id']) ? $_REQUEST['previous_id'] : '';
     $ownedFiles = array();
