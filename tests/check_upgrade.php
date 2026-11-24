@@ -8,7 +8,7 @@ $root = __DIR__ . '/..';
 $temp = sys_get_temp_dir() . '/sqs-copy-upgrade-' . bin2hex(random_bytes(6));
 $relative = 'custom/include/SQS_CopyText/copy.js';
 mkdir($temp . '/custom/include/SQS_CopyText', 0700, true);
-$fixtureVersion = $version === '1.0.7' ? '1.0.7' : '1.0.6';
+$fixtureVersion = in_array($version, array('1.0.7', '1.0.8'), true) ? $version : '1.0.6';
 copy(__DIR__ . '/fixtures/previous/copy-' . $fixtureVersion . '.js', $temp . '/' . $relative);
 if ($mode === 'modified') {
     file_put_contents($temp . '/' . $relative, 'local edit', FILE_APPEND);

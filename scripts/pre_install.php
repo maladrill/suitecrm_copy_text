@@ -60,6 +60,10 @@ function pre_install()
         'include/SQS_CopyText/copy.css' => 'c4571b8d524d74f0d9bf68d4abfb00471282a593dde0334f9d8cdf0ef23953a9',
         'include/SQS_CopyText/copy.js' => '4f2053af9c4140287be08e6d9f6b97247c018ad695f2473f53d68dff463487c6',
     );
+    $knownVersions['1.0.8'] = array_merge($knownVersions['1.0.7'], array(
+        'modules/ModuleBuilder/controller.php' => 'd12bce8b14cf387b288edeec4d2ed511b80fa15d65302f98f14b2658bd19db38',
+        'modules/ModuleBuilder/tpls/MBModule/field.tpl' => '02c62fb5f5680169ee9d7cdae12809310d5bce2d5904bbeeca33419898f2f961',
+    ));
     $previousVersion = isset($_REQUEST['previous_version']) ? $_REQUEST['previous_version'] : '';
     $previousId = isset($_REQUEST['previous_id']) ? $_REQUEST['previous_id'] : '';
     $ownedFiles = array();

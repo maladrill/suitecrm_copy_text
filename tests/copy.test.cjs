@@ -82,6 +82,14 @@ test('positions feedback beside the button without a page-level toast', () => {
     assert.doesNotMatch(css, /\.sqs-copy-notice\s*\{[^}]*position:\s*fixed/s);
 });
 
+test('sizes the icon to the field text and removes fixed pixel dimensions', () => {
+    const css = fs.readFileSync(path.join(__dirname, '..', 'src/custom/include/SQS_CopyText/copy.css'), 'utf8');
+    const js = fs.readFileSync(path.join(__dirname, '..', 'src/custom/include/SQS_CopyText/copy.js'), 'utf8');
+    assert.match(css, /\.sqs-copy-button\s*\{[^}]*font-size:\s*inherit;[^}]*line-height:\s*1;/s);
+    assert.match(css, /\.sqs-copy-button svg\s*\{[^}]*width:\s*1em;[^}]*height:\s*1em;/s);
+    assert.doesNotMatch(js, /<svg[^>]*\b(?:width|height)="\d+"/);
+});
+
 test('reports denied clipboard without copying hidden markup', async () => {
     const view = setup({ writeText() { return Promise.reject(new Error('denied')); } });
     view.click();

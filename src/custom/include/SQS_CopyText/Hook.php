@@ -38,7 +38,7 @@ class SQS_CopyText_Hook
             return;
         }
         print '<script type="application/json" id="sqs-copy-config">' . $json . '</script>'
-            . '<link rel="stylesheet" href="custom/include/SQS_CopyText/copy.css?v=1.0.7">'
-            . '<script src="custom/include/SQS_CopyText/copy.js?v=1.0.7"></script>';
+            . '<link rel="stylesheet" href="custom/include/SQS_CopyText/copy.css?v=1.0.9">'
+            . '<script src="custom/include/SQS_CopyText/copy.js?v=1.0.9"></script>';
     }
 }
