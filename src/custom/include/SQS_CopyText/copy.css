@@ -1,0 +1,29 @@
+.sqs-copy-source {
+    display: inline;
+    white-space: pre-wrap;
+}
+.sqs-copy-button {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    padding: 3px;
+    margin-left: 6px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+.sqs-copy-button:hover,
+.sqs-copy-button:focus-visible {
+    background: rgba(0, 0, 0, 0.09);
+    outline: 2px solid currentColor;
+    border-radius: 3px;
+}
+.sqs-copy-button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+.sqs-copy-status {
+    margin-left: 4px;
+    font-size: 0.9em;
+}
