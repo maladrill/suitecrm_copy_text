@@ -1,14 +1,10 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
+    return;
 }
-// Remove only extension files created by this package.
-$files = glob('custom/Extension/modules/*/Ext/Vardefs/_override_sqs_copytext_*.php');
-foreach ($files ?: array() as $file) {
-    if (is_file($file) && strpos((string) file_get_contents($file), 'SQS Copy Text:') !== false) {
-        unlink($file);
-    }
-}
+// Delete only settings owned by this package.
+$GLOBALS['db']->query("DELETE FROM config WHERE category = 'sqs_copy_text'");
+sugar_cache_clear('admin_settings_cache');
 require_once 'modules/Administration/QuickRepairAndRebuild.php';
 $repair = new RepairAndClear();
 $repair->repairAndClearAll(

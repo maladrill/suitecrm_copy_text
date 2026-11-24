@@ -4,38 +4,51 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
 
-function setup(clipboard) {
+function setup(clipboard, options = {}) {
     let listener;
     let status;
-    const source = { innerText: '  Line one\nLine two  ' };
+    let button;
+    const source = {
+        innerText: options.value === undefined ? '  Line one\nLine two  ' : options.value,
+        classList: { add(name) { source.className = name; } }
+    };
     const parent = {
         querySelector(selector) {
-            if (selector === '.sqs-copy-source') return source;
+            if (selector === '.sqs-copy-source') return source.className ? source : null;
             if (selector === '.sqs-copy-status') return status;
             return null;
         },
+        insertBefore(node) { button = node; node.parentNode = parent; },
         appendChild(node) { status = node; }
     };
-    const button = { parentNode: parent, disabled: false, setAttribute() {} };
+    source.parentNode = parent;
+    const cells = (options.fields || ['description']).map(field => ({
+        getAttribute() { return field; },
+        querySelector(selector) { return selector === '.sugar_field' ? source : null; }
+    }));
     const document = {
         documentElement: { lang: 'pl-PL' },
         readyState: 'complete',
         addEventListener(name, fn) { if (name === 'click') listener = fn; },
-        querySelectorAll() { return [button]; },
-        createElement() {
-            return { setAttribute() {}, textContent: '' };
-        }
+        getElementById(id) {
+            return id === 'sqs-copy-config' && options.config !== null
+                ? { textContent: options.config === undefined ? '["description"]' : options.config }
+                : null;
+        },
+        querySelectorAll(selector) { return selector === 'td[field]' ? cells : []; },
+        createElement() { return { setAttribute() {}, textContent: '' }; }
     };
     const script = fs.readFileSync(path.join(__dirname, '..', 'src/custom/include/SQS_CopyText/copy.js'), 'utf8');
     vm.runInNewContext(script, { document, navigator: { clipboard } });
-    return { button, source, get status() { return status; }, click() {
-        listener({ target: { closest() { return button; } } });
+    return { get button() { return button; }, source, get status() { return status; }, click() {
+        if (button) listener({ target: { closest() { return button; } } });
     } };
 }
 
 test('copies visible multiline value and reports success', async () => {
     let copied;
     const view = setup({ writeText(value) { copied = value; return Promise.resolve(); } });
+    assert.ok(view.button);
     view.click();
     await new Promise(setImmediate);
     assert.equal(copied, 'Line one\nLine two');
@@ -51,10 +64,17 @@ test('reports denied clipboard without copying hidden markup', async () => {
     assert.equal(view.button.disabled, false);
 });
 
-test('does not call the clipboard for an empty visible field', () => {
-    let called = false;
-    const view = setup({ writeText() { called = true; return Promise.resolve(); } });
-    view.source.innerText = '  ';
-    view.click();
-    assert.equal(called, false);
+test('does not add a button for an empty visible field', () => {
+    const view = setup({ writeText() { throw new Error('unexpected'); } }, { value: '  ' });
+    assert.equal(view.button, undefined);
+});
+
+test('does not add a button for a field without the Studio option', () => {
+    const view = setup({ writeText() { throw new Error('unexpected'); } }, { fields: ['name'] });
+    assert.equal(view.button, undefined);
+});
+
+test('ignores missing and malformed configuration', () => {
+    assert.equal(setup({}, { config: null }).button, undefined);
+    assert.equal(setup({}, { config: '{invalid' }).button, undefined);
 });

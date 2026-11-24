@@ -1,12 +1,9 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 
 $manifest = array(
     'name' => 'SQS Copy Text',
     'description' => 'Studio field option and copy button in SuiteCRM Detail View',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'author' => 'SQS Polska',
     'published_date' => '2026-11-24',
     'type' => 'module',
@@ -25,6 +22,8 @@ $installdefs = array(
               'to' => 'custom/include/SQS_CopyText/copy.js'),
         array('from' => '<basepath>/src/custom/include/SQS_CopyText/copy.css',
               'to' => 'custom/include/SQS_CopyText/copy.css'),
+        array('from' => '<basepath>/src/custom/include/Smarty/plugins/function.sqs_copy_option.php',
+              'to' => 'custom/include/Smarty/plugins/function.sqs_copy_option.php'),
         array('from' => '<basepath>/src/custom/modules/ModuleBuilder/controller.php',
               'to' => 'custom/modules/ModuleBuilder/controller.php'),
         array('from' => '<basepath>/src/custom/modules/ModuleBuilder/tpls/MBModule/field.tpl',

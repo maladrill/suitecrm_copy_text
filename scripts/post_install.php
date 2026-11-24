@@ -1,6 +1,6 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
+    return;
 }
 require_once 'modules/Administration/QuickRepairAndRebuild.php';
 $repair = new RepairAndClear();

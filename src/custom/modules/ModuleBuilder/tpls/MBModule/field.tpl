@@ -113,7 +113,7 @@ addForm('popup_form');
     <input type="hidden" name="sqs_copyable" value="0">
     <label for="sqs_copyable">
         <input type="checkbox" id="sqs_copyable" name="sqs_copyable" value="1"
-            {if !empty($vardef.sqs_copyable)}checked="checked"{/if}>
+            {sqs_copy_option module=$module->name field=$vardef.name mode='checked'}>
         {$mod_strings.LBL_SQS_COPYABLE}
     </label>
 </div>

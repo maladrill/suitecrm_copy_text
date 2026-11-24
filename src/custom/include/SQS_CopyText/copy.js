@@ -23,10 +23,36 @@
     }
 
     function initialise() {
-        var text = labels().copy;
-        document.querySelectorAll('.sqs-copy-button').forEach(function (button) {
-            button.setAttribute('aria-label', text);
-            button.setAttribute('title', text);
+        var config = document.getElementById('sqs-copy-config');
+        if (!config) {
+            return;
+        }
+        var configured;
+        try {
+            configured = JSON.parse(config.textContent);
+        } catch (error) {
+            return;
+        }
+        if (!Array.isArray(configured)) {
+            return;
+        }
+        var enabled = new Set(configured);
+        document.querySelectorAll('td[field]').forEach(function (cell) {
+            if (!enabled.has(cell.getAttribute('field'))) {
+                return;
+            }
+            var source = cell.querySelector('.sugar_field');
+            if (!source || !(source.innerText || '').trim()) {
+                return;
+            }
+            source.classList.add('sqs-copy-source');
+            var button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'sqs-copy-button';
+            button.setAttribute('aria-label', labels().copy);
+            button.setAttribute('title', labels().copy);
+            button.innerHTML = '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="13" height="15" rx="2"></rect><path d="M16 18v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3"></path></svg>';
+            source.parentNode.insertBefore(button, source.nextSibling);
         });
     }
 

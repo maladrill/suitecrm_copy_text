@@ -179,17 +179,7 @@ class="yui-navset detailview_tabs"
 				    {{/foreach}}
 				{{elseif $fields[$colData.field.name]}}
 					{counter name="panelFieldCount"}
-                    {{if !empty($fields[$colData.field.name].sqs_copyable) && isset($fields[$colData.field.name].value) && $fields[$colData.field.name].value !== '' && $fields[$colData.field.name].value !== null && empty($fields[$colData.field.name].sensitive)}}
-                        <span class="sqs-copy-source">{{sugar_field parentFieldArray='fields' vardef=$fields[$colData.field.name] displayType='DetailView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type}}</span>
-                        <button type="button" class="sqs-copy-button" aria-label="Copy field value" title="Copy field value">
-                            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="8" y="3" width="13" height="15" rx="2"></rect>
-                                <path d="M16 18v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3"></path>
-                            </svg>
-                        </button>
-                    {{else}}
-                        {{sugar_field parentFieldArray='fields' vardef=$fields[$colData.field.name] displayType='DetailView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type}}
-                    {{/if}}
+                    {{sugar_field parentFieldArray='fields' vardef=$fields[$colData.field.name] displayType='DetailView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type}}
 
 				{{/if}}
 				{{if !empty($colData.field.customCode) && $colData.field.customCodeRenderField}}
@@ -234,6 +224,7 @@ class="yui-navset detailview_tabs"
 
 </div>
 </div>
+<script type="application/json" id="sqs-copy-config">{sqs_copy_option module='{{$module}}' mode='json'}</script>
 <script src="custom/include/SQS_CopyText/copy.js"></script>
 {{include file=$footerTpl}}
 {{if $useTabs}}
