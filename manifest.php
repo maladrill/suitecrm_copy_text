@@ -3,7 +3,7 @@
 $manifest = array(
     'name' => 'SQS Copy Text',
     'description' => 'Studio field option and copy button in SuiteCRM Detail View',
-    'version' => '1.0.5',
+    'version' => '1.0.6',
     'author' => 'SQS Polska',
     'published_date' => '2026-11-24',
     'type' => 'module',
@@ -43,4 +43,12 @@ $installdefs = array(
     ),
     'post_execute' => array('<basepath>/scripts/post_install.php'),
     'post_uninstall' => array('<basepath>/scripts/post_uninstall.php'),
+);
+
+$upgrade_manifest = array(
+    'upgrade_paths' => array(
+        '1.0.3' => $installdefs,
+        '1.0.4' => $installdefs,
+        '1.0.5' => $installdefs,
+    ),
 );

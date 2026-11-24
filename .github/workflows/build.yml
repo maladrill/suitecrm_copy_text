@@ -24,18 +24,23 @@ jobs:
         run: docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_scanner.php
       - name: Test SuiteCRM installation hook contract
         run: docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_hooks.php
+      - name: Test in-place upgrades and file ownership
+        run: |
+          for mode in valid modified uninstalled; do
+            docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_upgrade.php "$mode"
+          done
       - name: Test Detail View hook without template replacement
         run: docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_detail_hook.php
       - name: Build installer
         run: python3 tools/build.py
       - name: Check ZIP contents
         run: |
-          python3 -m zipfile -t dist/SQS_Copy_Text-1.0.5.zip
+          python3 -m zipfile -t dist/SQS_Copy_Text-1.0.6.zip
           python3 tests/check_archive.py
       - uses: actions/upload-artifact@v5
         with:
-          name: SQS_Copy_Text-1.0.5
-          path: dist/SQS_Copy_Text-1.0.5.zip
+          name: SQS_Copy_Text-1.0.6
+          path: dist/SQS_Copy_Text-1.0.6.zip
           if-no-files-found: error
 
   release:
@@ -52,12 +57,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v1.0.5 >/dev/null 2>&1; then
-            echo "Release v1.0.5 already exists; skipping publication."
+          if gh release view v1.0.6 >/dev/null 2>&1; then
+            echo "Release v1.0.6 already exists; skipping publication."
           else
-            gh release create v1.0.5 dist/SQS_Copy_Text-1.0.5.zip \
+            gh release create v1.0.6 dist/SQS_Copy_Text-1.0.6.zip \
               --target "$GITHUB_SHA" \
-              --title "SQS Copy Text 1.0.5" \
+              --title "SQS Copy Text 1.0.6" \
               --prerelease \
-              --notes "Adds localized Polish and English clipboard notifications without changing the Detail View layout. Uninstall 1.0.4 and run Quick Repair and Rebuild before installing 1.0.5, then re-enable selected fields. Verify on a test CRM. SuiteCRM 7.14.x with PHP 7.4 is outside the official compatibility matrix."
+              --notes "Supports in-place upgrades from 1.0.3 through 1.0.5 and preserves Studio field selections. Existing files are checked against the installed version before replacement. Versions up to 1.0.2 still require uninstall. Verify on a test CRM. SuiteCRM 7.14.x with PHP 7.4 is outside the official compatibility matrix."
           fi

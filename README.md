@@ -26,7 +26,7 @@ field-editor template remains based on SuiteCRM's v7.14.3 template.
 
 ## Download installer
 
-Download [SQS_Copy_Text-1.0.5.zip](https://github.com/maladrill/suitecrm_copy_text/releases/download/v1.0.5/SQS_Copy_Text-1.0.5.zip) from [GitHub Releases](https://github.com/maladrill/suitecrm_copy_text/releases/tag/v1.0.5).
+Download [SQS_Copy_Text-1.0.6.zip](https://github.com/maladrill/suitecrm_copy_text/releases/download/v1.0.6/SQS_Copy_Text-1.0.6.zip) from [GitHub Releases](https://github.com/maladrill/suitecrm_copy_text/releases/tag/v1.0.6).
 Upload that ZIP directly to SuiteCRM's Module Loader. The repository's
 **Code → Download ZIP** archive is source code, not the installer; a GitHub
 Actions artifact is an outer archive containing the installer ZIP.
@@ -37,7 +37,7 @@ Actions artifact is an outer archive containing the installer ZIP.
 python3 tools/build.py
 ```
 
-The result is `dist/SQS_Copy_Text-1.0.5.zip`, ready to upload in
+The result is `dist/SQS_Copy_Text-1.0.6.zip`, ready to upload in
 **Admin → Module Loader**. The build requires only Python 3 and includes
 the sources, installer manifest and installation hooks. It produces identical
 bytes for identical source files. GitHub Actions lints the PHP source on
@@ -54,10 +54,11 @@ browser code tests and builds the ZIP.
    appears for three seconds without changing the field layout. The CRM
    must be served over HTTPS for the Clipboard API.
 
-The installer refuses to overwrite existing custom Studio controller,
-template, hook, or package assets. These changes have to be integrated with any existing local
-customizations before installation; do not delete existing overrides merely
-to satisfy the installer.
+The installer refuses to overwrite unrelated custom Studio files, hooks,
+and package assets. An upgrade checks the existing installation record and
+SHA-256 hashes of every existing package file before overwriting it. Local
+edits to installed package files require a deliberate merge; they are never
+silently overwritten.
 
 Supported field types: varchar, text, phone, email, URL, enum, multienum,
 integer, float, decimal, date, datetime, currency and relate. Encrypted,
@@ -67,11 +68,16 @@ the hidden target URL. Empty fields have no button.
 
 ## Upgrade and removal
 
-To replace 1.0.4 on the test CRM, first uninstall it through Module Loader
-and run **Quick Repair and Rebuild**. Install 1.0.5 and enable the checkbox
-again in Studio; uninstalling 1.0.4 deletes its copy settings. If 1.0.2 is
-still installed, uninstall it first and confirm that its
-`custom/include/DetailView/DetailView.tpl` override was removed.
+To upgrade 1.0.3, 1.0.4, or 1.0.5, upload 1.0.6 through Module Loader
+without uninstalling the current package. The existing field selections
+remain in SuiteCRM's `config` table. Test the updated Detail View and
+notification after a hard browser refresh. If the package files were
+modified after installation, the upgrade stops and reports the conflicting
+path. Review and merge that customization before retrying.
+
+Version 1.0.2 used an old global Detail View template. To move from that
+version, uninstall it first, run **Quick Repair and Rebuild**, and confirm
+that `custom/include/DetailView/DetailView.tpl` was removed.
 
 Module Loader keeps files in `custom/`, so a SuiteCRM upgrade preserves
 them. Test the package before upgrading beyond 7.15.2. Uninstall removes
