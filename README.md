@@ -25,7 +25,7 @@ field-editor template remains based on SuiteCRM's v7.14.3 template.
 
 ## Download installer
 
-Download [SQS_Copy_Text-1.0.3.zip](https://github.com/maladrill/suitecrm_copy_text/releases/download/v1.0.3/SQS_Copy_Text-1.0.3.zip) from [GitHub Releases](https://github.com/maladrill/suitecrm_copy_text/releases/tag/v1.0.3).
+Download [SQS_Copy_Text-1.0.4.zip](https://github.com/maladrill/suitecrm_copy_text/releases/download/v1.0.4/SQS_Copy_Text-1.0.4.zip) from [GitHub Releases](https://github.com/maladrill/suitecrm_copy_text/releases/tag/v1.0.4).
 Upload that ZIP directly to SuiteCRM's Module Loader. The repository's
 **Code → Download ZIP** archive is source code, not the installer; a GitHub
 Actions artifact is an outer archive containing the installer ZIP.
@@ -36,7 +36,7 @@ Actions artifact is an outer archive containing the installer ZIP.
 python3 tools/build.py
 ```
 
-The result is `dist/SQS_Copy_Text-1.0.3.zip`, ready to upload in
+The result is `dist/SQS_Copy_Text-1.0.4.zip`, ready to upload in
 **Admin → Module Loader**. The build requires only Python 3 and includes
 the sources, installer manifest and installation hooks. It produces identical
 bytes for identical source files. GitHub Actions lints the PHP source on
@@ -65,12 +65,11 @@ the hidden target URL. Empty fields have no button.
 
 ## Upgrade and removal
 
-To replace 1.0.2 on the test CRM, first uninstall it through Module Loader
-and run **Quick Repair and Rebuild**. Confirm that
-`custom/include/DetailView/DetailView.tpl` was removed by the uninstall
-before installing 1.0.3. Then enable the checkbox again in Studio;
-uninstalling 1.0.2 deletes its copy settings. Preserve any local edits
-made to that template before uninstalling.
+To replace 1.0.3 on the test CRM, first uninstall it through Module Loader
+and run **Quick Repair and Rebuild**. Install 1.0.4 and enable the checkbox
+again in Studio; uninstalling 1.0.3 deletes its copy settings. If 1.0.2 is
+still installed, uninstall it first and confirm that its
+`custom/include/DetailView/DetailView.tpl` override was removed.
 
 Module Loader keeps files in `custom/`, so a SuiteCRM upgrade preserves
 them. Test the package before upgrading beyond 7.15.2. Uninstall removes

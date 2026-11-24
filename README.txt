@@ -1,4 +1,4 @@
-SQS Copy Text 1.0.3
+SQS Copy Text 1.0.4
 SuiteCRM 7.14.3 through 7.15.2. Supports PHP 7.4-compatible module syntax.
 Official SuiteCRM 7.14.x runtime support is limited to PHP 8.1 and 8.2;
 SuiteCRM 7.15.x supports PHP 8.1 through 8.4.

@@ -37,7 +37,7 @@
             return;
         }
         var enabled = new Set(configured);
-        document.querySelectorAll('td[field]').forEach(function (cell) {
+        document.querySelectorAll('td[field], .detail-view-field[field]').forEach(function (cell) {
             if (!enabled.has(cell.getAttribute('field'))) {
                 return;
             }

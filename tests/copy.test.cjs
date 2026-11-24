@@ -35,7 +35,10 @@ function setup(clipboard, options = {}) {
                 ? { textContent: options.config === undefined ? '["description"]' : options.config }
                 : null;
         },
-        querySelectorAll(selector) { return selector === 'td[field]' ? cells : []; },
+        querySelectorAll(selector) {
+            const fieldCell = options.layout === 'div' ? '.detail-view-field[field]' : 'td[field]';
+            return selector.split(',').map(value => value.trim()).includes(fieldCell) ? cells : [];
+        },
         createElement() { return { setAttribute() {}, textContent: '' }; }
     };
     const script = fs.readFileSync(path.join(__dirname, '..', 'src/custom/include/SQS_CopyText/copy.js'), 'utf8');
@@ -72,6 +75,18 @@ test('does not add a button for an empty visible field', () => {
 test('does not add a button for a field without the Studio option', () => {
     const view = setup({ writeText() { throw new Error('unexpected'); } }, { fields: ['name'] });
     assert.equal(view.button, undefined);
+});
+
+test('adds a button in the SuiteP div-based Detail View layout', async () => {
+    let copied;
+    const view = setup(
+        { writeText(value) { copied = value; return Promise.resolve(); } },
+        { layout: 'div', fields: ['part_number'], config: '["part_number"]', value: 'ID78859' }
+    );
+    assert.ok(view.button);
+    view.click();
+    await new Promise(setImmediate);
+    assert.equal(copied, 'ID78859');
 });
 
 test('ignores missing and malformed configuration', () => {
