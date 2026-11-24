@@ -6,7 +6,7 @@ class UpgradeHistory
         return (object) array(
             'id' => $id,
             'id_name' => 'SQS_Copy_Text',
-            'version' => '1.0.5',
+            'version' => $_REQUEST['previous_version'],
             'status' => isset($GLOBALS['test_history_status']) ? $GLOBALS['test_history_status'] : 'installed',
             'type' => 'module',
         );

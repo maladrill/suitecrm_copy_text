@@ -27,7 +27,6 @@ function setup(clipboard, options = {}) {
     }));
     const document = {
         documentElement: { lang: 'en-US' },
-        body: { appendChild(node) { status = node; } },
         readyState: 'complete',
         addEventListener(name, fn) { if (name === 'click') listener = fn; },
         getElementById(id) {
@@ -44,7 +43,13 @@ function setup(clipboard, options = {}) {
             const fieldCell = options.layout === 'div' ? '.detail-view-field[field]' : 'td[field]';
             return selector.split(',').map(value => value.trim()).includes(fieldCell) ? cells : [];
         },
-        createElement() { return { setAttribute() {}, textContent: '' }; }
+        createElement() {
+            return {
+                setAttribute() {},
+                textContent: '',
+                appendChild(node) { status = node; node.parentNode = this; }
+            };
+        }
     };
     const script = fs.readFileSync(path.join(__dirname, '..', 'src/custom/include/SQS_CopyText/copy.js'), 'utf8');
     vm.runInNewContext(script, { document, navigator: { clipboard },
@@ -63,10 +68,18 @@ test('copies visible multiline value and reports success', async () => {
     await new Promise(setImmediate);
     assert.equal(copied, 'Line one\nLine two');
     assert.equal(view.status.textContent, 'Skopiowano');
+    assert.equal(view.status.parentNode, view.button);
     assert.equal(view.status.hidden, false);
     assert.equal(view.button.disabled, false);
     view.dismiss();
     assert.equal(view.status.hidden, true);
+});
+
+test('positions feedback beside the button without a page-level toast', () => {
+    const css = fs.readFileSync(path.join(__dirname, '..', 'src/custom/include/SQS_CopyText/copy.css'), 'utf8');
+    assert.match(css, /\.sqs-copy-button\s*\{[^}]*position:\s*relative/s);
+    assert.match(css, /\.sqs-copy-notice\s*\{[^}]*position:\s*absolute/s);
+    assert.doesNotMatch(css, /\.sqs-copy-notice\s*\{[^}]*position:\s*fixed/s);
 });
 
 test('reports denied clipboard without copying hidden markup', async () => {

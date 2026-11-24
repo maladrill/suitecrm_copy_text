@@ -45,6 +45,6 @@ def build(destination):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "dist/SQS_Copy_Text-1.0.6.zip")
+    parser.add_argument("--output", type=Path, default=ROOT / "dist/SQS_Copy_Text-1.0.7.zip")
     args = parser.parse_args()
     build(args.output.resolve())

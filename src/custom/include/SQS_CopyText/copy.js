@@ -5,13 +5,13 @@
     var status;
     var statusTimer;
 
-    function announce(message, failed) {
+    function announce(button, message, failed) {
         if (!status) {
-            status = document.createElement('div');
+            status = document.createElement('span');
             status.setAttribute('role', 'status');
             status.setAttribute('aria-live', 'polite');
-            document.body.appendChild(status);
         }
+        button.appendChild(status);
         status.className = failed ? 'sqs-copy-notice is-error' : 'sqs-copy-notice';
         status.textContent = message;
         status.hidden = false;
@@ -78,14 +78,14 @@
             return;
         }
         if (!navigator.clipboard || !navigator.clipboard.writeText) {
-            announce(labels.failed, true);
+            announce(button, labels.failed, true);
             return;
         }
         button.disabled = true;
         navigator.clipboard.writeText(value).then(function () {
-            announce(labels.done, false);
+            announce(button, labels.done, false);
         }, function () {
-            announce(labels.failed, true);
+            announce(button, labels.failed, true);
         }).then(function () {
             button.disabled = false;
         });

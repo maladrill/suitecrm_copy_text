@@ -52,6 +52,7 @@ function pre_install()
             'include/SQS_CopyText/copy.js' => '8c42cc525190edce3ef3f18391dce530095b2b3144e4a36598eb00694c261006',
         ),
     );
+    $knownVersions['1.0.6'] = $knownVersions['1.0.5'];
     $previousVersion = isset($_REQUEST['previous_version']) ? $_REQUEST['previous_version'] : '';
     $previousId = isset($_REQUEST['previous_id']) ? $_REQUEST['previous_id'] : '';
     $ownedFiles = array();
