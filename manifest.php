@@ -3,7 +3,7 @@
 $manifest = array(
     'name' => 'SQS Copy Text',
     'description' => 'Studio field option and copy button in SuiteCRM Detail View',
-    'version' => '1.0.1',
+    'version' => '1.0.2',
     'author' => 'SQS Polska',
     'published_date' => '2026-11-24',
     'type' => 'module',

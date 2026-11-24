@@ -1,0 +1,2 @@
+<?php
+$suitecrm_version = '7.14.3';

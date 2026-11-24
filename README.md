@@ -24,7 +24,7 @@ Their baseline refs are v7.14.3 and v7.15.2.
 
 ## Download installer
 
-Download [SQS_Copy_Text-1.0.1.zip](https://github.com/maladrill/suitecrm_copy_text/releases/download/v1.0.1/SQS_Copy_Text-1.0.1.zip) from [GitHub Releases](https://github.com/maladrill/suitecrm_copy_text/releases/tag/v1.0.1).
+Download [SQS_Copy_Text-1.0.2.zip](https://github.com/maladrill/suitecrm_copy_text/releases/download/v1.0.2/SQS_Copy_Text-1.0.2.zip) from [GitHub Releases](https://github.com/maladrill/suitecrm_copy_text/releases/tag/v1.0.2).
 Upload that ZIP directly to SuiteCRM's Module Loader. The repository's
 **Code → Download ZIP** archive is source code, not the installer; a GitHub
 Actions artifact is an outer archive containing the installer ZIP.
@@ -35,7 +35,7 @@ Actions artifact is an outer archive containing the installer ZIP.
 python3 tools/build.py
 ```
 
-The result is `dist/SQS_Copy_Text-1.0.1.zip`, ready to upload in
+The result is `dist/SQS_Copy_Text-1.0.2.zip`, ready to upload in
 **Admin → Module Loader**. The build requires only Python 3 and includes
 the sources, installer manifest and installation hooks. It produces identical
 bytes for identical source files. GitHub Actions lints the PHP source on

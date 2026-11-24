@@ -22,14 +22,16 @@ jobs:
         run: node --test tests/copy.test.cjs
       - name: Check Module Loader scanner compatibility
         run: docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_scanner.php
+      - name: Test SuiteCRM installation hook contract
+        run: docker run --rm -v "$PWD:/work:ro" -w /work php:7.4-cli php tests/check_hooks.php
       - name: Build installer
         run: python3 tools/build.py
       - name: Check ZIP contents
-        run: python3 -m zipfile -t dist/SQS_Copy_Text-1.0.1.zip
+        run: python3 -m zipfile -t dist/SQS_Copy_Text-1.0.2.zip
       - uses: actions/upload-artifact@v5
         with:
-          name: SQS_Copy_Text-1.0.1
-          path: dist/SQS_Copy_Text-1.0.1.zip
+          name: SQS_Copy_Text-1.0.2
+          path: dist/SQS_Copy_Text-1.0.2.zip
           if-no-files-found: error
 
   release:
@@ -46,12 +48,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v1.0.1 >/dev/null 2>&1; then
-            echo "Release v1.0.1 already exists; skipping publication."
+          if gh release view v1.0.2 >/dev/null 2>&1; then
+            echo "Release v1.0.2 already exists; skipping publication."
           else
-            gh release create v1.0.1 dist/SQS_Copy_Text-1.0.1.zip \
+            gh release create v1.0.2 dist/SQS_Copy_Text-1.0.2.zip \
               --target "$GITHUB_SHA" \
-              --title "SQS Copy Text 1.0.1" \
+              --title "SQS Copy Text 1.0.2" \
               --prerelease \
-              --notes "Corrected Module Loader scanner compatibility. The previous v1.0.0 package is rejected by SuiteCRM; use this installer. Verify Studio and Detail View on a test CRM. SuiteCRM 7.14.x with PHP 7.4 is outside the official compatibility matrix."
+              --notes "Fixes the UpgradeWizard pre_install hook contract. Earlier v1.0.0 and v1.0.1 packages must not be installed. Verify Studio and Detail View on a test CRM. SuiteCRM 7.14.x with PHP 7.4 is outside the official compatibility matrix."
           fi
