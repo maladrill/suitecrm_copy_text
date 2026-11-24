@@ -23,10 +23,12 @@ function pre_install()
         throw new RuntimeException('SuiteCRM 7.14.x does not support PHP 8.3 or 8.4');
     }
     $targets = array(
-    'include/DetailView/DetailView.tpl',
     'include/SQS_CopyText/copy.js',
     'include/SQS_CopyText/copy.css',
+    'include/SQS_CopyText/Settings.php',
+    'include/SQS_CopyText/Hook.php',
     'include/Smarty/plugins/function.sqs_copy_option.php',
+    'Extension/application/Ext/LogicHooks/sqs_copy_text.php',
     'modules/ModuleBuilder/controller.php',
     'modules/ModuleBuilder/tpls/MBModule/field.tpl',
     'Extension/modules/ModuleBuilder/Ext/Language/en_us.sqs_copy_text.php',

@@ -18,13 +18,14 @@ to a supported target, take a backup,
 test the application on PHP 8.2, upgrade SuiteCRM to 7.15.2, then move to
 PHP 8.4. See the official [compatibility matrix](https://docs.suitecrm.com/admin/compatibility-matrix/).
 
-The Detail View and Studio template snapshots used here have identical
-upstream Git blob IDs for every SuiteCRM release in the supported range.
-Their baseline refs are v7.14.3 and v7.15.2.
+The installer leaves the active Detail View template and theme untouched.
+It registers an application-level `after_ui_frame` hook which loads the
+copy button assets only on Detail Views with enabled fields. The Studio
+field-editor template remains based on SuiteCRM's v7.14.3 template.
 
 ## Download installer
 
-Download [SQS_Copy_Text-1.0.2.zip](https://github.com/maladrill/suitecrm_copy_text/releases/download/v1.0.2/SQS_Copy_Text-1.0.2.zip) from [GitHub Releases](https://github.com/maladrill/suitecrm_copy_text/releases/tag/v1.0.2).
+Download [SQS_Copy_Text-1.0.3.zip](https://github.com/maladrill/suitecrm_copy_text/releases/download/v1.0.3/SQS_Copy_Text-1.0.3.zip) from [GitHub Releases](https://github.com/maladrill/suitecrm_copy_text/releases/tag/v1.0.3).
 Upload that ZIP directly to SuiteCRM's Module Loader. The repository's
 **Code → Download ZIP** archive is source code, not the installer; a GitHub
 Actions artifact is an outer archive containing the installer ZIP.
@@ -35,7 +36,7 @@ Actions artifact is an outer archive containing the installer ZIP.
 python3 tools/build.py
 ```
 
-The result is `dist/SQS_Copy_Text-1.0.2.zip`, ready to upload in
+The result is `dist/SQS_Copy_Text-1.0.3.zip`, ready to upload in
 **Admin → Module Loader**. The build requires only Python 3 and includes
 the sources, installer manifest and installation hooks. It produces identical
 bytes for identical source files. GitHub Actions lints the PHP source on
@@ -51,8 +52,8 @@ browser code tests and builds the ZIP.
 4. Open a record's Detail View and click the adjacent copy icon. The CRM
    must be served over HTTPS for the Clipboard API.
 
-The installer refuses to overwrite existing custom Studio controller or
-templates. These changes have to be integrated with any existing local
+The installer refuses to overwrite existing custom Studio controller,
+template, hook, or package assets. These changes have to be integrated with any existing local
 customizations before installation; do not delete existing overrides merely
 to satisfy the installer.
 
@@ -64,10 +65,16 @@ the hidden target URL. Empty fields have no button.
 
 ## Upgrade and removal
 
+To replace 1.0.2 on the test CRM, first uninstall it through Module Loader
+and run **Quick Repair and Rebuild**. Confirm that
+`custom/include/DetailView/DetailView.tpl` was removed by the uninstall
+before installing 1.0.3. Then enable the checkbox again in Studio;
+uninstalling 1.0.2 deletes its copy settings. Preserve any local edits
+made to that template before uninstalling.
+
 Module Loader keeps files in `custom/`, so a SuiteCRM upgrade preserves
-them. Before future upgrades beyond 7.15.2, compare the upstream templates
-and test the package with the new release. Uninstall removes the package
-files and the settings created by its Studio checkbox.
+them. Test the package before upgrading beyond 7.15.2. Uninstall removes
+the package files and the settings created by its Studio checkbox.
 
 Changing a field checkbox stores a module and field setting in SuiteCRM's
 `config` table through its Administration API; no database schema change
@@ -84,5 +91,5 @@ and current field metadata. No production deployment has been performed.
 
 ## License
 
-AGPL-3.0; the two derived SuiteCRM Smarty templates retain their original
+AGPL-3.0; the derived SuiteCRM Studio Smarty template retains its original
 copyright notices. See [LICENSE.txt](LICENSE.txt).
