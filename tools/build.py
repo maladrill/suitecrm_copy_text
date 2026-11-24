@@ -17,6 +17,8 @@ SOURCES = (
     "src/custom/include/SQS_CopyText/Settings.php",
     "src/custom/include/SQS_CopyText/Hook.php",
     "src/custom/Extension/application/Ext/LogicHooks/sqs_copy_text.php",
+    "src/custom/Extension/application/Ext/Language/en_us.sqs_copy_text.php",
+    "src/custom/Extension/application/Ext/Language/pl_PL.sqs_copy_text.php",
     "src/custom/include/Smarty/plugins/function.sqs_copy_option.php",
     "src/custom/modules/ModuleBuilder/controller.php",
     "src/custom/modules/ModuleBuilder/tpls/MBModule/field.tpl",
@@ -43,6 +45,6 @@ def build(destination):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "dist/SQS_Copy_Text-1.0.4.zip")
+    parser.add_argument("--output", type=Path, default=ROOT / "dist/SQS_Copy_Text-1.0.5.zip")
     args = parser.parse_args()
     build(args.output.resolve())

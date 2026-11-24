@@ -8,6 +8,7 @@ function setup(clipboard, options = {}) {
     let listener;
     let status;
     let button;
+    let timer;
     const source = {
         innerText: options.value === undefined ? '  Line one\nLine two  ' : options.value,
         classList: { add(name) { source.className = name; } }
@@ -15,11 +16,9 @@ function setup(clipboard, options = {}) {
     const parent = {
         querySelector(selector) {
             if (selector === '.sqs-copy-source') return source.className ? source : null;
-            if (selector === '.sqs-copy-status') return status;
             return null;
         },
-        insertBefore(node) { button = node; node.parentNode = parent; },
-        appendChild(node) { status = node; }
+        insertBefore(node) { button = node; node.parentNode = parent; }
     };
     source.parentNode = parent;
     const cells = (options.fields || ['description']).map(field => ({
@@ -27,12 +26,18 @@ function setup(clipboard, options = {}) {
         querySelector(selector) { return selector === '.sugar_field' ? source : null; }
     }));
     const document = {
-        documentElement: { lang: 'pl-PL' },
+        documentElement: { lang: 'en-US' },
+        body: { appendChild(node) { status = node; } },
         readyState: 'complete',
         addEventListener(name, fn) { if (name === 'click') listener = fn; },
         getElementById(id) {
             return id === 'sqs-copy-config' && options.config !== null
-                ? { textContent: options.config === undefined ? '["description"]' : options.config }
+                ? { textContent: options.config === undefined
+                    ? JSON.stringify({
+                        fields: ['description'],
+                        labels: { copy: 'Kopiuj wartość pola', done: 'Skopiowano',
+                            failed: 'Nie udało się skopiować' }
+                    }) : options.config }
                 : null;
         },
         querySelectorAll(selector) {
@@ -42,8 +47,10 @@ function setup(clipboard, options = {}) {
         createElement() { return { setAttribute() {}, textContent: '' }; }
     };
     const script = fs.readFileSync(path.join(__dirname, '..', 'src/custom/include/SQS_CopyText/copy.js'), 'utf8');
-    vm.runInNewContext(script, { document, navigator: { clipboard } });
-    return { get button() { return button; }, source, get status() { return status; }, click() {
+    vm.runInNewContext(script, { document, navigator: { clipboard },
+        setTimeout(callback) { timer = callback; return 1; }, clearTimeout() { timer = null; } });
+    return { get button() { return button; }, source, get status() { return status; },
+        dismiss() { if (timer) timer(); }, click() {
         if (button) listener({ target: { closest() { return button; } } });
     } };
 }
@@ -56,7 +63,10 @@ test('copies visible multiline value and reports success', async () => {
     await new Promise(setImmediate);
     assert.equal(copied, 'Line one\nLine two');
     assert.equal(view.status.textContent, 'Skopiowano');
+    assert.equal(view.status.hidden, false);
     assert.equal(view.button.disabled, false);
+    view.dismiss();
+    assert.equal(view.status.hidden, true);
 });
 
 test('reports denied clipboard without copying hidden markup', async () => {
@@ -81,12 +91,23 @@ test('adds a button in the SuiteP div-based Detail View layout', async () => {
     let copied;
     const view = setup(
         { writeText(value) { copied = value; return Promise.resolve(); } },
-        { layout: 'div', fields: ['part_number'], config: '["part_number"]', value: 'ID78859' }
+        { layout: 'div', fields: ['part_number'],
+            config: '{"fields":["part_number"],"labels":{"done":"Skopiowano"}}',
+            value: 'ID78859' }
     );
     assert.ok(view.button);
     view.click();
     await new Promise(setImmediate);
     assert.equal(copied, 'ID78859');
+});
+
+test('uses the English CRM translation independent of the document language', async () => {
+    const view = setup({ writeText() { return Promise.resolve(); } }, {
+        config: '{"fields":["description"],"labels":{"copy":"Copy field value","done":"Copied","failed":"Copy failed"}}'
+    });
+    view.click();
+    await new Promise(setImmediate);
+    assert.equal(view.status.textContent, 'Copied');
 });
 
 test('ignores missing and malformed configuration', () => {

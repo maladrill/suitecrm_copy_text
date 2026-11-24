@@ -30,12 +30,12 @@ jobs:
         run: python3 tools/build.py
       - name: Check ZIP contents
         run: |
-          python3 -m zipfile -t dist/SQS_Copy_Text-1.0.4.zip
+          python3 -m zipfile -t dist/SQS_Copy_Text-1.0.5.zip
           python3 tests/check_archive.py
       - uses: actions/upload-artifact@v5
         with:
-          name: SQS_Copy_Text-1.0.4
-          path: dist/SQS_Copy_Text-1.0.4.zip
+          name: SQS_Copy_Text-1.0.5
+          path: dist/SQS_Copy_Text-1.0.5.zip
           if-no-files-found: error
 
   release:
@@ -52,12 +52,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v1.0.4 >/dev/null 2>&1; then
-            echo "Release v1.0.4 already exists; skipping publication."
+          if gh release view v1.0.5 >/dev/null 2>&1; then
+            echo "Release v1.0.5 already exists; skipping publication."
           else
-            gh release create v1.0.4 dist/SQS_Copy_Text-1.0.4.zip \
+            gh release create v1.0.5 dist/SQS_Copy_Text-1.0.5.zip \
               --target "$GITHUB_SHA" \
-              --title "SQS Copy Text 1.0.4" \
+              --title "SQS Copy Text 1.0.5" \
               --prerelease \
-              --notes "Fixes the copy icon in SuiteP's div-based Detail View while retaining support for table-based layouts. Uninstall 1.0.3 and run Quick Repair and Rebuild before installing 1.0.4, then re-enable selected fields. Verify on a test CRM. SuiteCRM 7.14.x with PHP 7.4 is outside the official compatibility matrix."
+              --notes "Adds localized Polish and English clipboard notifications without changing the Detail View layout. Uninstall 1.0.4 and run Quick Repair and Rebuild before installing 1.0.5, then re-enable selected fields. Verify on a test CRM. SuiteCRM 7.14.x with PHP 7.4 is outside the official compatibility matrix."
           fi

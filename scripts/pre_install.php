@@ -29,6 +29,8 @@ function pre_install()
     'include/SQS_CopyText/Hook.php',
     'include/Smarty/plugins/function.sqs_copy_option.php',
     'Extension/application/Ext/LogicHooks/sqs_copy_text.php',
+    'Extension/application/Ext/Language/en_us.sqs_copy_text.php',
+    'Extension/application/Ext/Language/pl_PL.sqs_copy_text.php',
     'modules/ModuleBuilder/controller.php',
     'modules/ModuleBuilder/tpls/MBModule/field.tpl',
     'Extension/modules/ModuleBuilder/Ext/Language/en_us.sqs_copy_text.php',

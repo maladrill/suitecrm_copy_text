@@ -1,25 +1,26 @@
 (function () {
     'use strict';
 
-    var messages = {
-        pl: { copy: 'Kopiuj wartość pola', done: 'Skopiowano', failed: 'Nie udało się skopiować' },
-        en: { copy: 'Copy field value', done: 'Copied', failed: 'Copy failed' }
-    };
+    var labels = { copy: 'Copy field value', done: 'Copied', failed: 'Copy failed' };
+    var status;
+    var statusTimer;
 
-    function labels() {
-        return /^pl\b/i.test(document.documentElement.lang || '') ? messages.pl : messages.en;
-    }
-
-    function announce(button, message) {
-        var status = button.parentNode.querySelector('.sqs-copy-status');
+    function announce(message, failed) {
         if (!status) {
-            status = document.createElement('span');
-            status.className = 'sqs-copy-status';
+            status = document.createElement('div');
             status.setAttribute('role', 'status');
             status.setAttribute('aria-live', 'polite');
-            button.parentNode.appendChild(status);
+            document.body.appendChild(status);
         }
+        status.className = failed ? 'sqs-copy-notice is-error' : 'sqs-copy-notice';
         status.textContent = message;
+        status.hidden = false;
+        if (statusTimer) {
+            clearTimeout(statusTimer);
+        }
+        statusTimer = setTimeout(function () {
+            status.hidden = true;
+        }, 3000);
     }
 
     function initialise() {
@@ -33,10 +34,17 @@
         } catch (error) {
             return;
         }
-        if (!Array.isArray(configured)) {
+        if (!configured || !Array.isArray(configured.fields)) {
             return;
         }
-        var enabled = new Set(configured);
+        if (configured.labels) {
+            ['copy', 'done', 'failed'].forEach(function (key) {
+                if (typeof configured.labels[key] === 'string' && configured.labels[key].length <= 200) {
+                    labels[key] = configured.labels[key];
+                }
+            });
+        }
+        var enabled = new Set(configured.fields);
         document.querySelectorAll('td[field], .detail-view-field[field]').forEach(function (cell) {
             if (!enabled.has(cell.getAttribute('field'))) {
                 return;
@@ -49,8 +57,8 @@
             var button = document.createElement('button');
             button.type = 'button';
             button.className = 'sqs-copy-button';
-            button.setAttribute('aria-label', labels().copy);
-            button.setAttribute('title', labels().copy);
+            button.setAttribute('aria-label', labels.copy);
+            button.setAttribute('title', labels.copy);
             button.innerHTML = '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="13" height="15" rx="2"></rect><path d="M16 18v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3"></path></svg>';
             source.parentNode.insertBefore(button, source.nextSibling);
         });
@@ -70,14 +78,14 @@
             return;
         }
         if (!navigator.clipboard || !navigator.clipboard.writeText) {
-            announce(button, labels().failed);
+            announce(labels.failed, true);
             return;
         }
         button.disabled = true;
         navigator.clipboard.writeText(value).then(function () {
-            announce(button, labels().done);
+            announce(labels.done, false);
         }, function () {
-            announce(button, labels().failed);
+            announce(labels.failed, true);
         }).then(function () {
             button.disabled = false;
         });

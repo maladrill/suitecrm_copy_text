@@ -25,11 +25,11 @@ $GLOBALS['db'] = new TestDatabase();
 $GLOBALS['cache_clear_count'] = 0;
 
 require __DIR__ . '/../scripts/pre_install.php';
-if ($checks !== 10 || !function_exists('pre_install')) {
+if ($checks !== 12 || !function_exists('pre_install')) {
     throw new RuntimeException('ModuleInstaller pre-install hook did not execute');
 }
 pre_install();
-if ($checks !== 10) {
+if ($checks !== 12) {
     throw new RuntimeException('UpgradeWizard ran pre-install twice');
 }
 
