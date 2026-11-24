@@ -9,7 +9,7 @@ jobs:
       matrix:
         php: ['7.4', '8.2', '8.4']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Lint PHP on PHP ${{ matrix.php }}
         run: |
           docker run --rm -v "$PWD:/work:ro" -w /work "php:${{ matrix.php }}-cli" \
@@ -17,15 +17,39 @@ jobs:
   package:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Test clipboard behavior
         run: node --test tests/copy.test.cjs
       - name: Build installer
         run: python3 tools/build.py
       - name: Check ZIP contents
         run: python3 -m zipfile -t dist/SQS_Copy_Text-1.0.0.zip
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: SQS_Copy_Text-1.0.0
           path: dist/SQS_Copy_Text-1.0.0.zip
           if-no-files-found: error
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [php-lint, package]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build installer for release
+        run: python3 tools/build.py
+      - name: Publish tested package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v1.0.0 >/dev/null 2>&1; then
+            echo "Release v1.0.0 already exists; skipping publication."
+          else
+            gh release create v1.0.0 dist/SQS_Copy_Text-1.0.0.zip \
+              --target "$GITHUB_SHA" \
+              --title "SQS Copy Text 1.0.0" \
+              --prerelease \
+              --notes "Module Loader installer for SuiteCRM 7.14.3–7.15.2. Verify the Studio integration on a test CRM before production deployment. SuiteCRM 7.14.x with PHP 7.4 is outside the official compatibility matrix."
+          fi
