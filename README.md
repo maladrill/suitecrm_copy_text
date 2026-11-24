@@ -8,17 +8,12 @@ table or field type is created.
 
 ## Compatibility
 
-| SuiteCRM | Module PHP syntax | Official PHP support for SuiteCRM |
-| --- | --- | --- |
-| 7.14.3–7.14.9 | 7.4–8.4 | 8.1–8.2 |
-| 7.15.0–7.15.2 | 7.4–8.4 | 8.1–8.4 |
+| SuiteCRM | Module PHP syntax |
+| --- | --- |
+| 7.14.3–7.14.9 | 7.4–8.4 |
+| 7.15.0–7.15.2 | 7.4–8.4 |
 
-The package is installable on PHP 7.4, but **SuiteCRM 7.14.x running PHP 7.4
-is outside SuiteCRM's supported configuration**. To move from such a system
-to a supported target, take a backup,
-test the application on PHP 8.2, upgrade SuiteCRM to 7.15.2, then move to
-PHP 8.4. See the official [compatibility matrix](https://docs.suitecrm.com/admin/compatibility-matrix/).
-
+The package is installable on PHP 7.4. 
 The installer leaves the active Detail View template and theme untouched.
 It registers an application-level `after_ui_frame` hook which loads the
 copy button assets only on Detail Views with enabled fields. The Studio
@@ -74,10 +69,6 @@ remain in SuiteCRM's `config` table. Test the updated Detail View and
 notification after a hard browser refresh. If the package files were
 modified after installation, the upgrade stops and reports the conflicting
 path. Review and merge that customization before retrying.
-
-Version 1.0.2 used an old global Detail View template. To move from that
-version, uninstall it first, run **Quick Repair and Rebuild**, and confirm
-that `custom/include/DetailView/DetailView.tpl` was removed.
 
 Module Loader keeps files in `custom/`, so a SuiteCRM upgrade preserves
 them. Test the package before upgrading beyond 7.15.2. Uninstall removes
