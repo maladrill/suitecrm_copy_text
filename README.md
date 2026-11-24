@@ -22,6 +22,13 @@ The Detail View and Studio template snapshots used here have identical
 upstream Git blob IDs for every SuiteCRM release in the supported range.
 Their baseline refs are v7.14.3 and v7.15.2.
 
+## Download installer
+
+Download [SQS_Copy_Text-1.0.0.zip](https://github.com/maladrill/suitecrm_copy_text/releases/download/v1.0.0/SQS_Copy_Text-1.0.0.zip) from [GitHub Releases](https://github.com/maladrill/suitecrm_copy_text/releases/tag/v1.0.0).
+Upload that ZIP directly to SuiteCRM's Module Loader. The repository's
+**Code → Download ZIP** archive is source code, not the installer; a GitHub
+Actions artifact is an outer archive containing the installer ZIP.
+
 ## Build
 
 ```sh
