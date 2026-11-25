@@ -5,7 +5,8 @@ const vm = require('node:vm');
 const path = require('node:path');
 
 function setup(clipboard, options = {}) {
-    let listener;
+    const listeners = new Set();
+    let insertions = 0;
     let status;
     let button;
     let timer;
@@ -18,7 +19,12 @@ function setup(clipboard, options = {}) {
             if (selector === '.sqs-copy-source') return source.className ? source : null;
             return null;
         },
-        insertBefore(node) { button = node; node.parentNode = parent; }
+        insertBefore(node) {
+            insertions++;
+            button = node;
+            node.parentNode = parent;
+            source.nextElementSibling = node;
+        }
     };
     source.parentNode = parent;
     const cells = (options.fields || ['description']).map(field => ({
@@ -28,7 +34,8 @@ function setup(clipboard, options = {}) {
     const document = {
         documentElement: { lang: 'en-US' },
         readyState: 'complete',
-        addEventListener(name, fn) { if (name === 'click') listener = fn; },
+        addEventListener(name, fn) { if (name === 'click') listeners.add(fn); },
+        removeEventListener(name, fn) { if (name === 'click') listeners.delete(fn); },
         getElementById(id) {
             return id === 'sqs-copy-config' && options.config !== null
                 ? { textContent: options.config === undefined
@@ -44,21 +51,32 @@ function setup(clipboard, options = {}) {
             return selector.split(',').map(value => value.trim()).includes(fieldCell) ? cells : [];
         },
         createElement() {
-            return {
+            const element = {
+                classList: { contains(name) { return element.className === name; } },
                 setAttribute() {},
                 textContent: '',
                 appendChild(node) { status = node; node.parentNode = this; }
             };
+            return element;
         }
     };
     const script = fs.readFileSync(path.join(__dirname, '..', 'src/custom/include/SQS_CopyText/copy.js'), 'utf8');
-    vm.runInNewContext(script, { document, navigator: { clipboard },
-        setTimeout(callback) { timer = callback; return 1; }, clearTimeout() { timer = null; } });
+    for (let run = 0; run < (options.runs || 1); run++) {
+        vm.runInNewContext(script, { document, navigator: { clipboard },
+        setTimeout(callback, delay) { assert.equal(delay, 3000); timer = callback; return 1; }, clearTimeout() { timer = null; } });
+    }
     return { get button() { return button; }, source, get status() { return status; },
+        insertions, listenerCount: listeners.size,
         dismiss() { if (timer) timer(); }, click() {
-        if (button) listener({ target: { closest() { return button; } } });
+        if (button) listeners.forEach(listener => listener({ target: { closest() { return button; } } }));
     } };
 }
+
+test('repeated AjaxUI script execution keeps one copy button and click listener', () => {
+    const view = setup({}, { runs: 2, layout: 'div' });
+    assert.equal(view.insertions, 1);
+    assert.equal(view.listenerCount, 1);
+});
 
 test('copies visible multiline value and reports success', async () => {
     let copied;

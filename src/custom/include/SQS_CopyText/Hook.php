@@ -18,10 +18,12 @@ class SQS_CopyText_Hook
         if (!$fields) {
             return;
         }
+        // Older installations may not have the compiled language extension.
+        $isPolish = strcasecmp($GLOBALS['current_language'] ?? '', 'pl_PL') === 0;
         $translations = array(
-            'copy' => array('LBL_SQS_COPY_TEXT_COPY', 'Copy field value'),
-            'done' => array('LBL_SQS_COPY_TEXT_COPIED', 'Copied'),
-            'failed' => array('LBL_SQS_COPY_TEXT_FAILED', 'Copy failed'),
+            'copy' => array('LBL_SQS_COPY_TEXT_COPY', $isPolish ? 'Kopiuj wartość pola' : 'Copy field value'),
+            'done' => array('LBL_SQS_COPY_TEXT_COPIED', $isPolish ? 'Skopiowano' : 'Copied'),
+            'failed' => array('LBL_SQS_COPY_TEXT_FAILED', $isPolish ? 'Nie udało się skopiować' : 'Copy failed'),
         );
         $labels = array();
         foreach ($translations as $name => $translation) {
@@ -38,7 +40,7 @@ class SQS_CopyText_Hook
             return;
         }
         print '<script type="application/json" id="sqs-copy-config">' . $json . '</script>'
-            . '<link rel="stylesheet" href="custom/include/SQS_CopyText/copy.css?v=1.0.9">'
-            . '<script src="custom/include/SQS_CopyText/copy.js?v=1.0.9"></script>';
+            . '<link rel="stylesheet" href="custom/include/SQS_CopyText/copy.css?v=' . (int) filemtime(__DIR__ . '/copy.css') . '">'
+            . '<script src="custom/include/SQS_CopyText/copy.js?v=' . (int) filemtime(__DIR__ . '/copy.js') . '"></script>';
     }
 }

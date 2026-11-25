@@ -53,6 +53,10 @@
             if (!source || !(source.innerText || '').trim()) {
                 return;
             }
+            // AjaxUI can execute this script again for the same field node.
+            if (source.nextElementSibling && source.nextElementSibling.classList.contains('sqs-copy-button')) {
+                return;
+            }
             source.classList.add('sqs-copy-source');
             var button = document.createElement('button');
             button.type = 'button';
@@ -64,7 +68,10 @@
         });
     }
 
-    document.addEventListener('click', function (event) {
+    if (document.sqsCopyTextClickHandler) {
+        document.removeEventListener('click', document.sqsCopyTextClickHandler);
+    }
+    document.sqsCopyTextClickHandler = function (event) {
         var button = event.target.closest('.sqs-copy-button');
         if (!button || button.disabled) {
             return;
@@ -89,7 +96,8 @@
         }).then(function () {
             button.disabled = false;
         });
-    });
+    };
+    document.addEventListener('click', document.sqsCopyTextClickHandler);
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initialise);
