@@ -23,6 +23,12 @@ if (strpos($output, '"fields":["reference_c"]') === false
     throw new RuntimeException('Detail View configuration is incorrect');
 }
 $app_strings = array();
+$GLOBALS['current_language'] = 'pl_PL';
+ob_start();
+$hook->render('after_ui_frame', null);
+if (strpos(ob_get_clean(), '"done":"Skopiowano"') === false) {
+    throw new RuntimeException('Polish fallback without compiled labels is missing');
+}
 require __DIR__ . '/../src/custom/Extension/application/Ext/Language/en_us.sqs_copy_text.php';
 ob_start();
 $hook->render('after_ui_frame', null);
